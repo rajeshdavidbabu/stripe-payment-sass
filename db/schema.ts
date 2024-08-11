@@ -7,3 +7,9 @@ export const users = pgTable("users", {
   subscription: varchar("subscription", { length: 50 }),
   tokens: integer("tokens").notNull().default(0),
 });
+
+export const payments = pgTable("payments", {
+  email: text("email").notNull(),
+  id: text("id").notNull().primaryKey(),
+  checkoutSessionObject: jsonb("checkout_session_object").notNull(),
+});

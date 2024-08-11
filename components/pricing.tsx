@@ -8,7 +8,7 @@ const pricingPlans = [
     price: 2.99,
     currency: "EUR",
     frequency: "/one-time",
-    link: "https://buy.stripe.com/test_7sI3f09L2ao68Qo6oq",
+    link: "https://buy.stripe.com/test_9AQ5n86yQ8fY5EccMP",
     description: "Perfect for individuals who want to try out the product.",
     features: ["250000 tokens (Approx. 125 requests to our AI Scheduler)"],
     cta: "Buy now",
