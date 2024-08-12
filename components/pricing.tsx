@@ -10,7 +10,29 @@ const pricingPlans = [
     frequency: "/one-time",
     link: "https://buy.stripe.com/test_9AQ5n86yQ8fY5EccMP",
     description: "Perfect for individuals who want to try out the product.",
-    features: ["250000 tokens (Approx. 125 requests to our AI Scheduler)"],
+    features: ["250000 tokens"],
+    cta: "Buy now",
+  },
+  {
+    title: "Expert",
+    price: 6.99,
+    currency: "EUR",
+    frequency: "/one-time",
+    link: "https://buy.stripe.com/test_00g8zk3mEdAi2s0cMQ",
+    description: "For users who can't get enough",
+    features: ["800000 tokens"],
+    cta: "Buy now",
+  },
+  {
+    title: "Subscriber",
+    price: "11.99",
+    currency: "EUR",
+    link: "https://buy.stripe.com/test_7sI3f09L2ao68Qo6oq",
+    frequency: "/month",
+    description: "For small teams and businesses.",
+    features: [
+      "500000 tokens added to every billing cycle",
+    ],
     cta: "Buy now",
   },
   {
@@ -22,19 +44,7 @@ const pricingPlans = [
     description: "Get unlimited access for a year",
     features: ["Unlimited tokens for one whole year"],
     cta: "Buy now",
-  },
-  {
-    title: "Subscriber",
-    price: "11.99",
-    currency: "EUR",
-    link: "https://buy.stripe.com/test_7sI3f09L2ao68Qo6oq",
-    frequency: "/month",
-    description: "For small teams and businesses.",
-    features: [
-      "Pay per month and enjoy 500000 tokens added to every billing cycle",
-    ],
-    cta: "Buy now",
-  },
+  }
 ];
 
 function generateStripeLink(baseLink: string, email: string) {

@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "db:generate": "drizzle-kit generate",
+    "db:seed": "tsx -r dotenv/config db/seed.ts",
     "db:migrate": "tsx -r dotenv/config db/migrate.ts",
     "db:ui": "drizzle-kit studio --verbose --port 3003"
   },

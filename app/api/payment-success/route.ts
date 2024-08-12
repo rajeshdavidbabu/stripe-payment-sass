@@ -12,8 +12,6 @@ export async function POST(req: NextRequest) {
   const body = await req.text();
   const sig = req.headers.get("stripe-signature") as string;
 
-  console.log("request coming");
-
   let event: Stripe.Event;
 
   try {
@@ -22,8 +20,6 @@ export async function POST(req: NextRequest) {
       sig,
       process.env.STRIPE_WEBHOOK_SECRET!
     );
-
-    console.log("incoming event", event);
   } catch (err) {
     if (err instanceof Error) {
       return NextResponse.json(
@@ -34,31 +30,100 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unknown error" }, { status: 500 });
   }
 
-  let email: string | null | undefined;
+  let customerEmail: string | null | undefined;
   let errors: string[] = [];
   let updates: string[] = [];
 
   try {
     switch (event.type) {
       case "checkout.session.completed":
-        const session = event.data.object as Stripe.Checkout.Session;
+        const session = await stripe.checkout.sessions.retrieve(
+          event.data.object.id,
+          {
+            expand: ["line_items", "customer"],
+          }
+        );
 
-        email = session.customer_details?.email;
+         customerEmail =
+          session.customer_details?.email || session.customer_email;
+        const priceId = session.line_items?.data[0]?.price?.id;
 
-        console.log("session", session);
+        if (!customerEmail) {
+          throw new Error(`Customer email not found for session: ${session.id}`);
+        }
 
+        if (!priceId) {
+          throw new Error(`Price ID not found for session: ${session.id}`);
+        }
+
+        let tokensToAdd = 0;
+        if (priceId === process.env.PRICE_ID_STARTER) {
+          tokensToAdd = 250000;
+        } else if (priceId === process.env.PRICE_ID_EXPERT) {
+          tokensToAdd = 800000;
+        } else {
+          throw new Error(`Unknown price ID ${priceId}`);
+        }
+
+        const currentUserArr = await db
+          .select()
+          .from(users)
+          .where(eq(users.email, customerEmail))
+          .limit(1);
+
+        if (!currentUserArr || currentUserArr.length === 0) {
+          throw new Error(
+            `User not found on the database for email: ${customerEmail}`
+          );
+        }
+
+        const currentUser = currentUserArr[0];
+        const newTokens = currentUser.tokens + tokensToAdd;
+
+        // Update the user's tokens in the database
+        await db
+          .update(users)
+          .set({
+            tokens: newTokens,
+            type: 'paid'
+          })
+          .where(eq(users.email, customerEmail));
+
+        updates.push(
+          `Updated tokens for ${customerEmail}: ${currentUser.tokens} -> ${newTokens}`
+        );
+
+        // Store the payment information
+        await db.insert(payments).values({
+          email: customerEmail,
+          id: session.id,
+          checkoutSessionObject: session,
+        });
+
+        updates.push(`Inserted ${session.id} in payments table for ${customerEmail}`);
         break;
       default:
         console.log(`Unhandled event type ${event.type}`);
     }
   } catch (err) {
-    console.log("Error occurred at payment-success db update ", err);
     errors.push(`Error occurred at payment-success db update: ${err}`);
+
+    return NextResponse.json(
+      {
+        received: true,
+        email: customerEmail || "missing email",
+        updates,
+        errors,
+      },
+      {
+        status: 500,
+      }
+    );
   }
 
   return NextResponse.json({
     received: true,
-    email: email || "missing email",
+    email: customerEmail,
     updates,
     errors,
   });
