@@ -44,53 +44,54 @@ export async function POST(req: NextRequest) {
           }
         );
 
-         customerEmail =
+        customerEmail =
           session.customer_details?.email || session.customer_email;
         const priceId = session.line_items?.data[0]?.price?.id;
 
         if (!customerEmail) {
-          throw new Error(`Customer email not found for session: ${session.id}`);
+          throw new Error(
+            `Customer email not found for session: ${session.id}`
+          );
         }
 
         if (!priceId) {
-            throw new Error(`Price ID not found for session: ${session.id}`);
-          }
-        
-          let subscriptionType = '';
-          if (priceId === process.env.PRICE_ID_UNLIMITED) {
-            subscriptionType = 'unlimited';
-          } else {
-            throw new Error(`Unknown or unsupported price ID ${priceId}`);
-          }
-        
-          const currentUserArr = await db
-            .select()
-            .from(users)
-            .where(eq(users.email, customerEmail))
-            .limit(1);
-        
-          if (!currentUserArr || currentUserArr.length === 0) {
-            throw new Error(
-              `User not found on the database for email: ${customerEmail}`
-            );
-          }
-        
-          const currentUser = currentUserArr[0];
-        
-          // Check if user is already subscribed
-          if (currentUser.type === 'subscriber') {
-            throw new Error(`User ${customerEmail} is already subscribed`);
-          }
-        
-          // Update the user's subscription type and set tokens to infinity in the database
-          await db
-            .update(users)
-            .set({
-              tokens: Number.POSITIVE_INFINITY,
-              type: 'subscriber',
-              subscription: subscriptionType
-            })
-            .where(eq(users.email, customerEmail));
+          throw new Error(`Price ID not found for session: ${session.id}`);
+        }
+
+        let subscriptionType = "";
+        if (priceId === process.env.PRICE_ID_UNLIMITED) {
+          subscriptionType = "unlimited";
+        } else {
+          throw new Error(`Unknown or unsupported price ID ${priceId}`);
+        }
+
+        const currentUserArr = await db
+          .select()
+          .from(users)
+          .where(eq(users.email, customerEmail))
+          .limit(1);
+
+        if (!currentUserArr || currentUserArr.length === 0) {
+          throw new Error(
+            `User not found on the database for email: ${customerEmail}`
+          );
+        }
+
+        const currentUser = currentUserArr[0];
+
+        // Check if user is already subscribed
+        if (currentUser.type === "subscriber") {
+          throw new Error(`User ${customerEmail} is already subscribed`);
+        }
+
+        // Update the user's subscription type and set tokens to infinity in the database
+        await db
+          .update(users)
+          .set({
+            tokens: Number.POSITIVE_INFINITY,
+            type: "subscriber",
+          })
+          .where(eq(users.email, customerEmail));
 
         updates.push(
           `Updated tokens for ${customerEmail}: ${currentUser.tokens} -> unlimited`
@@ -103,7 +104,9 @@ export async function POST(req: NextRequest) {
           checkoutSessionObject: session,
         });
 
-        updates.push(`Inserted ${session.id} in payments table for ${customerEmail}`);
+        updates.push(
+          `Inserted ${session.id} in payments table for ${customerEmail}`
+        );
         break;
       default:
         console.log(`Unhandled event type ${event.type}`);

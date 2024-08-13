@@ -4,47 +4,25 @@ import Link from "next/link";
 
 const pricingPlans = [
   {
-    title: "Starter",
-    price: 2.99,
-    currency: "EUR",
-    frequency: "/one-time",
-    link: "https://buy.stripe.com/test_9AQ5n86yQ8fY5EccMP",
-    description: "Perfect for individuals who want to try out the product.",
-    features: ["250000 tokens"],
-    cta: "Buy now",
-  },
-  {
-    title: "Expert",
-    price: 6.99,
-    currency: "EUR",
-    frequency: "/one-time",
-    link: "https://buy.stripe.com/test_00g8zk3mEdAi2s0cMQ",
-    description: "For users who can't get enough",
-    features: ["800000 tokens"],
-    cta: "Buy now",
-  },
-  {
     title: "Subscriber",
     price: "11.99",
     currency: "EUR",
     link: "https://buy.stripe.com/test_7sI3f09L2ao68Qo6oq",
     frequency: "/month",
     description: "For small teams and businesses.",
-    features: [
-      "500000 tokens added to every billing cycle",
-    ],
-    cta: "Buy now",
+    features: ["Access to our pro features"],
+    cta: "Subscribe now",
   },
   {
-    title: "Unlimited",
+    title: "Enterprise",
     price: 99.99,
     currency: "EUR",
-    frequency: "/year",
+    frequency: "/month",
     link: "https://buy.stripe.com/test_7sI3f09L2ao68Qo6oq",
-    description: "Get unlimited access for a year",
-    features: ["Unlimited tokens for one whole year"],
-    cta: "Buy now",
-  }
+    description: "For large teams and businesses.",
+    features: ["Access to our pro, enterprise support and AI features"],
+    cta: "Subscribe now now",
+  },
 ];
 
 function generateStripeLink(baseLink: string, email: string) {
@@ -54,7 +32,7 @@ function generateStripeLink(baseLink: string, email: string) {
 
 export default function Pricing() {
   return (
-    <div className="grid  lg:grid-cols-3 gap-12 lg:gap-8 py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="grid  lg:grid-cols-2 gap-12 lg:gap-8 py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {pricingPlans.map((plan) => (
         <div
           key={plan.title}
