@@ -5,9 +5,9 @@ import Link from "next/link";
 const pricingPlans = [
   {
     title: "Subscriber",
-    price: "11.99",
+    price: 11.99,
     currency: "EUR",
-    link: "https://buy.stripe.com/test_7sI3f09L2ao68Qo6oq",
+    link: "https://buy.stripe.com/test_eVa2aW1ewcwe3w428es",
     frequency: "/month",
     description: "For small teams and businesses.",
     features: ["Access to our pro features"],
