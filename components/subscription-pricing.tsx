@@ -4,31 +4,26 @@ import Link from "next/link";
 
 const pricingPlans = [
   {
-    title: "Subscriber",
+    title: "Subscriber Basic",
     price: 11.99,
     currency: "EUR",
-    link: "https://buy.stripe.com/test_eVa2aW1ewcwe3w428es",
+    link: "https://buy.stripe.com/test_eVa2aW1ewcwe3w428e",
     frequency: "/month",
     description: "For small teams and businesses.",
     features: ["Access to our pro features"],
     cta: "Subscribe now",
   },
   {
-    title: "Enterprise",
-    price: 99.99,
+    title: "Subscriber Pro",
+    price: 19.99,
     currency: "EUR",
     frequency: "/month",
-    link: "https://buy.stripe.com/test_7sI3f09L2ao68Qo6oq",
+    link: "https://buy.stripe.com/test_8wM02ObTaeEmfeM5kr",
     description: "For large teams and businesses.",
     features: ["Access to our pro, enterprise support and AI features"],
-    cta: "Subscribe now now",
+    cta: "Subscribe now",
   },
 ];
-
-function generateStripeLink(baseLink: string, email: string) {
-  const encodedEmail = encodeURIComponent(email);
-  return `${baseLink}?prefilled_email=${encodedEmail}`;
-}
 
 export default function Pricing() {
   return (

@@ -3,8 +3,33 @@ import Link from "next/link";
 import { db } from "@/db";
 import { subscribedUsers as subscribedUsersTable } from "@/db/schema";
 import { InferSelectModel } from "drizzle-orm";
+import Stripe from "stripe";
 
 type SubscribedUser = InferSelectModel<typeof subscribedUsersTable>;
+
+function getAppSubscriptionStatus(
+  subscriptionStatus: Stripe.Subscription.Status | null,
+  invoiceStatus: string | null,
+  nextInvoiceDate: Date | null
+): "active" | "cancelling" | "pending-payment" | "inactive" {
+  if (!subscriptionStatus) return "inactive";
+
+  switch (subscriptionStatus.toLowerCase()) {
+    case "active":
+      if (invoiceStatus?.toLowerCase() === "paid") {
+        return nextInvoiceDate ? "active" : "cancelling";
+      }
+      return "pending-payment";
+    case "past_due":
+    case "unpaid":
+      return "pending-payment";
+    case "canceled":
+    case "incomplete_expired":
+      return "inactive";
+    default:
+      return "inactive";
+  }
+}
 
 export default async function Home() {
   let subscribedUsers: SubscribedUser[] = [];
@@ -47,21 +72,26 @@ export default async function Home() {
               <td className="py-2 px-4 border-b text-center">{user.email}</td>
               <td className="py-2 px-4 border-b text-center">{user.type}</td>
               <td className="py-2 px-4 border-b text-center">
-                {user.subscriptionStatus}
+                {user.subscriptionStatus ?? "-"}
               </td>
               <td className="py-2 px-4 border-b text-center">
-                {user.invoiceStatus}
+                {user.invoiceStatus ?? "-"}
               </td>
               <td className="py-2 px-4 border-b text-center">
-                {user.currentPlan}
+                {user.currentPlan ?? "-"}
               </td>
               <td className="py-2 px-4 border-b text-center">
                 {user.nextInvoiceDate
                   ? new Date(user.nextInvoiceDate).toLocaleDateString()
                   : "-"}
               </td>
-              {/* This needs to be calculated based on the user's subscription status and invoice status */}
-              <td className="py-2 px-4 border-b text-center">-</td>
+              <td className="py-2 px-4 border-b text-center">
+                {getAppSubscriptionStatus(
+                  user.subscriptionStatus,
+                  user.invoiceStatus,
+                  user.nextInvoiceDate
+                )}
+              </td>
             </tr>
           ))}
         </tbody>
