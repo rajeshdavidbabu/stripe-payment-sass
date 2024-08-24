@@ -1,5 +1,7 @@
 A simple example for setting up subscriptions using stripe-payment links
 
+watch the tutorial here -> https://www.youtube.com/watch?v=mLSnVg7YvIY
+
 ## Getting Started:
 
 Prepare DB: 
