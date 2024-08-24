@@ -6,7 +6,7 @@ export default async function PricingPage() {
   return (
     <main className="flex min-h-screen flex-col items-center gap-8 p-24">
       <Button asChild>
-        <Link href="/subscriptions">Home</Link>
+        <Link href="/">Home</Link>
       </Button>
       <SubscriptionPricing />
     </main>
