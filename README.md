@@ -4,8 +4,11 @@ A simple example for setting up subscriptions using stripe-payment links
 
 Prepare DB: 
 
-- Have a postgresql database running using postgres.app and add the DATABASE_URL `(eg: postgresql://localhost:5432/postgres)` in your `.env.local` file
 ```bash
+# Have a postgresql database running using postgres.app 
+# and add the DATABASE_URL `(eg: postgresql://localhost:5432/postgres)`
+# in your `.env.local` file
+
 npm install
 npm run db:generate
 npm run db:migrate
